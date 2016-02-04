@@ -14,8 +14,8 @@ app.listen(port, function() {
 });
 
 app.get('/simpsons', function(req, res){
-  if (req.query.q) {
-    request("https://www.frinkiac.com/api/search?q="+req.query.q, function(error, response, html){
+  if (req.query.text) {
+    request("https://www.frinkiac.com/api/search?q="+req.query.text, function(error, response, html){
       if(!error){
         var data = JSON.parse(response.body);
         if (data) {
