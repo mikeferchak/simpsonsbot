@@ -1,0 +1,11 @@
+{
+  "name"         : "simpsonsbot",
+  "version"      : "0.0.1",
+  "description"  : "simpsons slack integration",
+  "main"         : "server.js",
+  "author"       : "ferchak",
+  "dependencies" : {
+    "express"    : "latest",
+    "request"    : "latest"
+  }
+}
