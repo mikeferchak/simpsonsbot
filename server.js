@@ -18,10 +18,19 @@ app.get('/simpsons', function(req, res){
     request("https://www.frinkiac.com/api/search?q="+req.query.text, function(error, response, html){
       if(!error){
         var data = JSON.parse(response.body);
-        if (data) {
-          res.render('pages/simpsons', {body: "<img src='"+"https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"+"'/>"});
+        if (data[0]) {
+          res.statusCode = 200;
+          res.json({
+            "response_type": "in_channel",
+            "attachments": [
+                {
+                   "image_url": "https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"
+                }
+            ]
+          });
         } else {
-          res.render('pages/error', {body: "nope"});
+          res.statusCode = 204;
+          console.log("else");
         }
       }
     });
