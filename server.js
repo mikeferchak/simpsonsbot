@@ -1,32 +1,31 @@
 var express = require('express');
 var request = require('request');
 var app     = express();
+var port = process.env.PORT || 8080;
 
-app.get('/simpsons', function(req, res){
-  console.log("get ok");
-  url = "https://www.frinkiac.com/api/search?q="+req.query.q;
-  request(url, function(error, response, html){
-    if(!error){
-      console.log("request ok");
-      var data = JSON.parse(response.body);
-      if (data) {
-        var body = "https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg";
-        var doc = buildHtml(body);
-        res.writeHead(200, {
-          'Content-Type': 'text/html',
-          'Content-Length': doc.length,
-          'Expires': new Date().toUTCString()
-        });
-        res.end(doc);
-      }
-    }
-  });
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
+app.get('/', function(req, res) {
+    res.render('index');
 });
 
-function buildHtml(body) {
-  return '<!DOCTYPE html><html><header></header><body><img src="' + body + '"/></body></html>';
-}
+app.listen(port, function() {
+    console.log('running on http://localhost:' + port);
+});
 
-app.listen('8081');
-console.log("listening on 8081");
-exports = module.exports = app;
+app.get('/simpsons', function(req, res){
+  if (req.query.q) {
+    request("https://www.frinkiac.com/api/search?q="+req.query.q, function(error, response, html){
+      if(!error){
+        var data = JSON.parse(response.body);
+        if (data) {
+          res.render('pages/simpsons', {body: "<img src='"+"https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"+"'/>"});
+        } else {
+          res.render('pages/error', {body: "nope"});
+        }
+      }
+    });
+  } else {
+    res.render('pages/error', {body: "nope"});
+  }
+});

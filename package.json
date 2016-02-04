@@ -6,6 +6,7 @@
   "author"       : "ferchak",
   "dependencies" : {
     "express"    : "latest",
-    "request"    : "latest"
+    "request"    : "latest",
+    "ejs"        : "latest"
   }
 }
