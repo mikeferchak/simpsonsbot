@@ -22,10 +22,10 @@ app.get('/simpsons', function(req, res){
           res.statusCode = 200;
           res.json({
             "response_type": "in_channel",
-            "fallback": "Episode: "+data[0].Episode+"@"+data[0].Timestamp,
             "attachments": [
                 {
-                   "image_url": "https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"
+                  "fallback": "Episode: "+data[0].Episode+"@"+data[0].Timestamp,
+                  "image_url": "https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"
                 }
             ]
           });
