@@ -1,14 +1,15 @@
 {
-  "name"         : "simpsonsbot",
-  "version"      : "0.0.1",
-  "description"  : "simpsons slack integration",
-  "main"         : "server.js",
-  "author"       : "ferchak",
-  "dependencies" : {
-    "express"    : "latest",
-    "request"    : "latest",
-    "ejs"        : "latest",
-    "request-promise" : "latest",
-    "base64url" : "latest"
+  "name": "simpsonsbot",
+  "version": "0.0.1",
+  "description": "simpsons slack integration",
+  "main": "server.js",
+  "author": "ferchak",
+  "dependencies": {
+    "base64url": "latest",
+    "ejs": "latest",
+    "express": "latest",
+    "request": "latest",
+    "request-promise": "latest",
+    "word-wrap": "^1.1.0"
   }
 }

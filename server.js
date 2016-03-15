@@ -1,6 +1,7 @@
 var express = require('express'),
     rp      = require('request-promise'),
     base64url = require('base64url'),
+    wrap    = require('word-wrap'),
     app     = express(),
     port    = process.env.PORT || 8080;
 
@@ -31,7 +32,10 @@ app.get('/', function(req, res){
                 subtitles_arr.push(subtitles[i].Content);
               }
             }
-            subtitles_string = subtitles_arr.join(" ");
+            subtitles_string = subtitles_arr.join("\n");
+            subtitles_string = wrap(subtitles_string);
+            subtitles_string = new Buffer(subtitles_string).toString('base64');
+            subtitles_string = encodeURI(subtitles_string);
           })
           .then(function(){
             res.json({
@@ -39,7 +43,7 @@ app.get('/', function(req, res){
               "attachments": [
                   {
                     "fallback": "Episode: "+episode_data.Episode+"@"+episode_data.Timestamp,
-                    "image_url": "https://www.frinkiac.com/meme/"+episode_data.Episode+"/"+episode_data.Timestamp+".jpg?b64lines="+base64url(subtitles_string)
+                    "image_url": "https://www.frinkiac.com/meme/"+episode_data.Episode+"/"+episode_data.Timestamp+".jpg?b64lines="+subtitles_string
                   }
               ]
             });
