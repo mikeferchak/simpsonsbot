@@ -33,7 +33,7 @@ app.get('/', function(req, res){
               }
             }
             subtitles_string = subtitles_arr.join("\n");
-            subtitles_string = wrap(subtitles_string, 30);
+            subtitles_string = wrap(subtitles_string, 25);
             subtitles_string = new Buffer(subtitles_string).toString('base64');
             subtitles_string = encodeURI(subtitles_string);
           })
