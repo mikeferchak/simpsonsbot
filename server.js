@@ -1,7 +1,8 @@
-var express = require('express');
-var request = require('request');
-var app     = express();
-var port = process.env.PORT || 8080;
+var express = require('express'),
+    rp      = require('request-promise'),
+    base64url = require('base64url'),
+    app     = express(),
+    port    = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 
@@ -11,24 +12,41 @@ app.listen(port, function() {
 
 app.get('/', function(req, res){
   if (req.query.text) {
-    request("https://www.frinkiac.com/api/search?q="+req.query.text, function(error, response, html){
-      if(!error){
-        var data = JSON.parse(response.body);
-        if (data[0]) {
-          res.json({
-            "response_type": "in_channel",
-            "attachments": [
-                {
-                  "fallback": "Episode: "+data[0].Episode+"@"+data[0].Timestamp,
-                  "image_url": "https://www.frinkiac.com/img/"+data[0].Episode+"/"+data[0].Timestamp+"/medium.jpg"
-                }
-            ]
+    var episode_data,
+        subtitles_arr = [],
+        subtitles_string = "";
+
+    rp({uri: "https://www.frinkiac.com/api/search?q="+req.query.text, json: true})
+      .then(function(data){
+        episode_data = data[0];
+      })
+      .then(function(){
+        rp(
+          {uri: "https://www.frinkiac.com/api/caption?e="+episode_data.Episode+"&t="+episode_data.Timestamp,
+           json: true}
+         ).then(function(caption_data){
+            var subtitles = caption_data.Subtitles;
+            for (var i in subtitles) {
+              if(subtitles[i].Content.length > 0) {
+                subtitles_arr.push(subtitles[i].Content);
+              }
+            }
+            subtitles_string = subtitles_arr.join(" ");
+          })
+          .then(function(){
+            res.json({
+              "response_type": "in_channel",
+              "attachments": [
+                  {
+                    "fallback": "Episode: "+episode_data.Episode+"@"+episode_data.Timestamp,
+                    "image_url": "https://www.frinkiac.com/meme/"+episode_data.Episode+"/"+episode_data.Timestamp+".jpg?b64lines="+base64url(subtitles_string)
+                  }
+              ]
+            });
           });
-        }
-      }
-    });
+      });
   } else {
-    res.statusCode = 204;
-    res.json({});
+    res.statusCode = 404;
+    res.end();
   }
 });
